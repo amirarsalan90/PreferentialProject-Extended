@@ -7,26 +7,26 @@ import matplotlib.lines as mlines
 
 
 # data = pd.read_csv("results-nodes.csv")
-# df = data.groupby(['p-value']).mean()
+# df = data.groupby(['p1','p2','q1','q2']).mean()
 # print(df)
 # x1 = np.arange(10000,60000,10000)
 #
 # x = np.arange(10000,50000,0.5)
 # def y1(x):
-#     return 0.2*x
+#     return 0.1*x
 # def y2(x):
-#     return 0.5*x
+#     return 0.4*x
 # def y3(x):
-#     return 0.8*x
+#     return 0.53*x
 #
 # plt.figure(figsize=(15,12))
 # plt.plot(x,y1(x), "b-",linewidth=1)
 # plt.plot(x,y2(x), "b-",linewidth=1)
 # plt.plot(x,y3(x), "b-",linewidth=1)
 #
-# plt.plot(x1,df.iloc[0,:-1], "rD", label='p=0.6')
-# plt.plot(x1,df.iloc[1,:-1], "rs", label='p=0.75')
-# plt.plot(x1,df.iloc[2,:-1], "r^", label='p=0.9')
+# plt.plot(x1,df.iloc[0,:-1], "rD", label='(p1,p2,q1,q2)=(0.4,0.2,0.3,0.1)')
+# plt.plot(x1,df.iloc[1,:-1], "rs", label='(p1,p2,q1,q2)=(0.6,0.15,0.2,0.05)')
+# plt.plot(x1,df.iloc[2,:-1], "r^", label='(p1,p2,q1,q2)=(0.6,0.3,0.07,0.03)')
 #
 # plt.ylabel("$E[n_{t}]$", fontsize=25)
 # plt.xlabel("t", fontsize=25)
@@ -39,26 +39,26 @@ import matplotlib.lines as mlines
 
 
 data = pd.read_csv("results-edges.csv")
-df = data.groupby(['p-value']).mean()
+df = data.groupby(['p1','p2','q1','q2']).mean()
 print(df)
 x1 = np.arange(10000,60000,10000)
 
 x = np.arange(10000,50000,0.5)
 def y1(x):
-    return 0.12*x
+    return 0.1*x
 def y2(x):
-    return 0.375*x
+    return 0.35*x
 def y3(x):
-    return 0.72*x
+    return 0.696*x
 
 plt.figure(figsize=(15,12))
 plt.plot(x,y1(x), "b-",linewidth=1)
 plt.plot(x,y2(x), "b-",linewidth=1)
 plt.plot(x,y3(x), "b-",linewidth=1)
 
-plt.plot(x1,df.iloc[0,:-1], "rD", label='p=0.6')
-plt.plot(x1,df.iloc[1,:-1], "rs", label='p=0.75')
-plt.plot(x1,df.iloc[2,:-1], "r^", label='p=0.9')
+plt.plot(x1,df.iloc[0,:-1], "rD", label='(p1,p2,q1,q2)=(0.4,0.2,0.3,0.1)')
+plt.plot(x1,df.iloc[1,:-1], "rs", label='(p1,p2,q1,q2)=(0.6,0.15,0.2,0.05)')
+plt.plot(x1,df.iloc[2,:-1], "r^", label='(p1,p2,q1,q2)=(0.6,0.3,0.07,0.03)')
 
 plt.ylabel("$E[m_{t}]$", fontsize=25)
 plt.xlabel("t", fontsize=25)
@@ -106,4 +106,5 @@ plt.show()
 # plt.yticks(fontsize=20)
 # plt.savefig("plot3.png")
 # plt.show()
+
 

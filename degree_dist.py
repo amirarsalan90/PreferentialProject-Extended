@@ -51,43 +51,95 @@ def return_degree_matrix_for_deletion(graph):
 
 
 #this function gets adds or deletes a node and returns the graph
-def addition_deletion(graph, p=0.8, q=0.3):
-   '''
-   First, the addition or deletion is decided (based on p value).
-   Then, a node is selected for addition or deletion. Then the node and edge get added or the node gets deleted'''
+def addition_deletion(graph, p1, p2, q1, q2):
+    '''
+    First, the addition or deletion is decided (based on p value).
+    Then, a node is selected for addition or deletion. Then the node and edge get added or the node gets deleted'''
 
-   global NodeCounter
-   global TimeCounter
+    global NodeCounter
+    global TimeCounter
+    global new_round
 
-   if random.random() < p:  #addition
-       degree_matrix_for_addition = return_degree_matrix_for_addition(graph)
-       NodeCounter += 1
-       TimeCounter += 1
-       p = degree_matrix_for_addition[:,1] / (degree_matrix_for_addition[:,1].sum())
-       node_to_connect_to = np.random.choice(degree_matrix_for_addition[:,0], 1, p=p)
-       graph.add_node(NodeCounter)
-       graph.add_edge(NodeCounter, node_to_connect_to[0])
+    action = np.random.choice(["p1", "p2", "q1", "q2"], 1, p=[p1, p2, q1, q2])
 
-   else:  #deletion
-       degree_matrix_for_deletion = return_degree_matrix_for_deletion(graph)
-       TimeCounter += 1
-       p = degree_matrix_for_deletion[:,1] / (degree_matrix_for_deletion[:,1].sum())
-       node_to_delete = np.random.choice(degree_matrix_for_deletion[:,0], 1, p=p)
-       graph.remove_node(node_to_delete[0])
+    if new_round == False:
+        TimeCounter = float(2)
+        new_round = True
 
-   return graph
+
+    if action == "p1":  #node addition
+        degree_matrix_for_addition = return_degree_matrix_for_addition(graph)
+        NodeCounter += 1
+        TimeCounter += 1
+        neighbors_degree = []
+        p_of_node = degree_matrix_for_addition[:,1] / (degree_matrix_for_addition[:,1].sum())
+        node_to_connect_to = np.random.choice(degree_matrix_for_addition[:,0], 1, p=p_of_node)
+        chosen_node_degree = graph.degree(node_to_connect_to[0])
+        graph.add_node(NodeCounter)
+        graph.add_edge(NodeCounter, node_to_connect_to[0])
+
+
+    if action == "p2": #edge_addition
+        degree_matrix_for_addition = return_degree_matrix_for_addition(graph)
+        #NodeCounter += 1
+        TimeCounter += 1
+        neighbors_degree = []
+        p_of_node = degree_matrix_for_addition[:, 1] / (degree_matrix_for_addition[:, 1].sum())
+        node_to_connect_to = np.random.choice(degree_matrix_for_addition[:, 0], 1, p=p_of_node)
+        chosen_node_degree = graph.degree(node_to_connect_to[0])
+        list_of_nodes = list(graph.nodes)
+        if len(list_of_nodes) > 1:
+            list_of_nodes.remove(node_to_connect_to[0])
+            second_node = np.random.choice(list_of_nodes,1)
+            graph.add_edge(node_to_connect_to[0],second_node[0])
+        else:
+            graph = graph
+
+
+    if action == "q1": #node_deletion
+        degree_matrix_for_deletion = return_degree_matrix_for_deletion(graph)
+        TimeCounter += 1
+        p_of_node = degree_matrix_for_deletion[:, 1] / (degree_matrix_for_deletion[:, 1].sum())
+        node_to_delete = np.random.choice(degree_matrix_for_deletion[:, 0], 1, p=p_of_node)
+        neighbors_degree = []
+        if TimeCounter > 40000:
+            neighbors = graph[node_to_delete[0]]
+            new_round = False
+            for i in neighbors:
+                neighbors_degree.append(graph.degree(i))
+        chosen_node_degree = graph.degree(node_to_delete[0])
+        graph.remove_node(node_to_delete[0])
+
+    if action == "q2": #edge_deletion
+        degree_matrix_for_deletion = return_degree_matrix_for_deletion(graph)
+        TimeCounter += 1
+        p_of_node = degree_matrix_for_deletion[:, 1] / (degree_matrix_for_deletion[:, 1].sum())
+        node_to_delete = np.random.choice(degree_matrix_for_deletion[:, 0], 1, p=p_of_node)
+        chosen_node_degree = graph.degree(node_to_delete[0])
+        neighbors_degree = []
+        list_of_nodes = list(nx.neighbors(graph,node_to_delete[0]))
+        if len(list_of_nodes) > 1:
+            second_node = np.random.choice(list_of_nodes, 1)
+            graph.remove_edge(node_to_delete[0], second_node[0])
+        else:
+            graph = graph
+
+    return graph, neighbors_degree, chosen_node_degree
 
 
 
 NodeCounter = float(2)
 TimeCounter = float(2)
-
+new_round=True
 
 
 def main():
 
    #set the testing p-values and the timesteps to record the results
-   p = 0.8
+   p1 = 0.5
+   p2 = 0.2
+   q1 = 0.2
+   q2 = 0.1
 
    for t in range(1,2):
        #runtime.append(time.time())
@@ -108,9 +160,9 @@ def main():
                G.add_node(float(1))
                G.add_node(float(2))
                G.add_edge(1, 2)
-               G = addition_deletion(G,p)
+               G, neighbors_degree, chosen_node_degree = addition_deletion(G, p1, p2, q1, q2)
            else:
-               G = addition_deletion(G,p)
+               G, neighbors_degree, chosen_node_degree = addition_deletion(G, p1, p2, q1, q2)
 
        def f(x):
            return (x**(-3.667))
@@ -127,12 +179,12 @@ def main():
 
        fig, ax = plt.subplots()
        ax.plot(deg[:-1], cnt_cumul[:-1], 'rs')
-       ax.plot(x,y_cumul,'b-')
+       #ax.plot(x,y_cumul,'b-')
        ax.set_xlabel("k", fontsize=15)
        ax.set_ylabel("$p'(k)$", fontsize=15)
        plt.xscale("log")
        plt.yscale("log")
-       plt.savefig("plot4.png")
+       plt.savefig("plot4-1.png")
 
        plt.show()
 
